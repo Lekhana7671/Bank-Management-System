@@ -1,4 +1,4 @@
-# 🏦 Banking Management System
+# 🏦 Bank Management System
 
 **Name:** Yarnakula Lekhana\
 **Institute:** Codegnan\
@@ -13,7 +13,7 @@
 
 ### 📌 Overview
 
-**Banking Management System** is a menu-driven,
+**Bank Management System** is a menu-driven,
 console-based application developed using Core Java to demonstrate basic
 banking operations.
 
