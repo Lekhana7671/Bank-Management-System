@@ -45,7 +45,7 @@ saved records can be loaded from this file.
 
 ## 📊 Project Structure
 
-The Java source files are organized under the `com.banksystem` package.
+The Java source files are organized under the `com.bankingsystem` package.
 
 ``` text
 BankManagementSystem
@@ -245,6 +245,7 @@ withdrawal of ₹1,000.
 
   Restart the application with        Saved accounts and transaction
   `bankdata.dat` available            history are loaded.
+  
   -----------------------------------------------------------------------
 
 ## 📦 Deliverables
@@ -295,14 +296,6 @@ want to retain the saved account and transaction records between runs.
 -   For a real banking system, additional security, authentication,
     robust data storage, backup, and recovery mechanisms would be
     required.
-
-## 🚀 Future Enhancements
-
--   Use `BigDecimal` for more precise monetary calculations.
--   Add account authentication and authorization.
--   Improve backup and recovery.
--   Strengthen input validation and reporting.
--   Integrate a database for larger-scale data management.
 
 ------------------------------------------------------------------------
 
