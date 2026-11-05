@@ -1,4 +1,4 @@
-# 🏦 BankEase -- Banking Management System
+# 🏦 Banking Management System
 
 **Name:** Yarnakula Lekhana\
 **Institute:** Codegnan\
@@ -13,7 +13,7 @@
 
 ### 📌 Overview
 
-**BankEase -- Banking Management System** is a menu-driven,
+**Banking Management System** is a menu-driven,
 console-based application developed using Core Java to demonstrate basic
 banking operations.
 
@@ -27,7 +27,7 @@ exceptions, loops, switch statements, console input with `Scanner`, and
 Java file I/O through object serialization.
 
 Account and transaction data are stored in Java collections and
-serialized to `bankdata.dat`. When the application starts again, the
+serialized to `bankdata.txt`. When the application starts again, the
 saved records can be loaded from this file.
 
 ## 🎯 Objectives
@@ -45,20 +45,17 @@ saved records can be loaded from this file.
 
 ## 📊 Project Structure
 
-The Java source files are organized under the `com.bankease` package.
+The Java source files are organized under the `com.banksystem` package.
 
 ``` text
-BankEase
+BankManagementSystem
 └── src
-    └── com.bankease
-        ├── BankEaseApplication.java
+    └── com.bankingsystem
+        ├── BankSystemApplication.java
         ├── BankAccount.java
         ├── BankService.java
         ├── Transaction.java
-        ├── InvalidAmountException.java
-        ├── InsufficientBalanceException.java
-        ├── AccountNotFoundException.java
-        └── DuplicateAccountException.java
+        └── CustomExceptions.java
 ```
 
 ### Class Description
@@ -66,7 +63,7 @@ BankEase
   -------------------------------------------------------------------------
   Class                                 Description
   ------------------------------------- -----------------------------------
-  `BankEaseApplication.java`            Main class that handles the console
+  `BankSystemApplication.java`            Main class that handles the console
                                         menu, user input, and exception
                                         handling.
 
@@ -81,16 +78,8 @@ BankEase
                                         account number, transaction type,
                                         amount, and date-time.
 
-  `InvalidAmountException.java`         Handles invalid deposit or
-                                        withdrawal amounts.
-
-  `InsufficientBalanceException.java`   Handles withdrawals that exceed the
-                                        available balance.
-
-  `AccountNotFoundException.java`       Handles requests for accounts that
-                                        do not exist.
-
-  `DuplicateAccountException.java`      Handles duplicate account numbers.
+  `CustomExceptions.java`               Handles input output errors.
+  
   -------------------------------------------------------------------------
 
 ## 🛠️ Tools & Technologies Used
@@ -107,7 +96,9 @@ BankEase
 -   **Java I/O and Serialization** -- Saving and restoring data.
 -   **`ObjectOutputStream`** -- Writing serialized objects to a file.
 -   **`ObjectInputStream`** -- Reading serialized objects from a file.
--   **`bankdata.dat`** -- Runtime data file used to persist account and
+-   **`FileInputStream`** -- Reading bytes from a file.
+-   **`FileoutputStream`** -- Writing bytes into a file.
+-   **`bankdata.txt`** -- Runtime data file used to persist account and
     transaction records.
 
 ## 🧪 Methodology
@@ -163,7 +154,7 @@ banking-related errors:
 -   The `BankAccount` and `Transaction` model classes implement
     `Serializable`.
 -   `ObjectOutputStream` writes the account `HashMap` and transaction
-    `ArrayList` to `bankdata.dat`.
+    `ArrayList` to `bankdata.txt`.
 -   `ObjectInputStream` reads the saved collections when the application
     starts.
 -   This allows account records and transaction history to be restored
@@ -206,6 +197,7 @@ banking-related errors:
   `ObjectOutputStream`                Save collections to a file.
 
   `ObjectInputStream`                 Load saved collections from a file.
+  
   -----------------------------------------------------------------------
 
 ## 📋 Console Menu
