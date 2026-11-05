@@ -1,201 +1,231 @@
-package com.bankease;
+package com.bankingsystem;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.ArrayList;
 
 public class BankService {
 
-    //Collection to store bank accounts
-    private HashMap<Integer, BankAccount> accounts =
-            new HashMap<>();
+	HashMap<Integer, BankAccount> accounts = new HashMap<>();
+	ArrayList<Transaction> transactions = new ArrayList<>();
 
-    //Collection to store transactions
-    private ArrayList<Transaction> transactions =
-            new ArrayList<>();
+	public BankService() {
+	    loadData();
+	}
 
-    private int transactionCounter = 1;
+    // Save account and transaction data
+    private void saveData() {
 
+        try (ObjectOutputStream oos =
+                     new ObjectOutputStream(
+                             new FileOutputStream("bankdata.txt"))) {
 
-    //Create account
-    public void createAccount(int accountNumber,
-                              String accountHolderName,
-                              double balance)
+            oos.writeObject(accounts);
+            oos.writeObject(transactions);
+            oos.flush();
+            System.out.println("Data saved successfully.");
+
+        } catch (IOException e) {
+
+            System.out.println("Error saving data: " + e.getMessage());
+        }
+    }
+
+    // Load account and transaction data
+    private void loadData() {
+
+        try (ObjectInputStream ois =
+                     new ObjectInputStream(
+                             new FileInputStream("bankdata.txt"))) {
+
+            accounts = (HashMap<Integer, BankAccount>) ois.readObject();
+
+            transactions =
+                    (ArrayList<Transaction>) ois.readObject();
+
+            System.out.println("Bank data loaded successfully.");
+
+        } catch (FileNotFoundException e) {
+
+            System.out.println(
+                    "No previous bank records found. Starting fresh."+ e.getMessage());
+
+        } catch (IOException | ClassNotFoundException |
+                 ClassCastException e) {
+
+            System.out.println(
+                    "Error loading bank data: " + e.getMessage());
+
+            accounts = new HashMap<>();
+            transactions = new ArrayList<>();
+        }
+    }
+
+    // Create account
+    public void createAccount(int accountNumber, String name,
+                              double openingBalance)
             throws DuplicateAccountException,
                    InvalidAmountException {
 
-        if (accounts.containsKey(accountNumber)) {
-            throw new DuplicateAccountException(
-                    "Account number already exists!"
-            );
-        }
-
         if (accountNumber <= 0) {
             throw new IllegalArgumentException(
-                    "Account number must be positive!"
-            );
+                    "Account number must be positive.");
         }
 
-        if (accountHolderName == null ||
-                accountHolderName.trim().isEmpty()) {
+        if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException(
-                    "Account holder name cannot be empty!"
-            );
+                    "Account holder name cannot be empty.");
         }
 
-        if (balance < 0) {
+        if (!Double.isFinite(openingBalance) || openingBalance < 0) {
             throw new InvalidAmountException(
-                    "Opening balance cannot be negative!"
-            );
+                    "Opening balance cannot be negative or invalid.");
+        }
+
+        if (accounts.containsKey(accountNumber)) {
+            throw new DuplicateAccountException(
+                    "Account number already exists.");
         }
 
         BankAccount account = new BankAccount(
-                accountNumber, accountHolderName, balance
-        );
+                accountNumber, name.trim(), openingBalance);
 
         accounts.put(accountNumber, account);
 
-        System.out.println("Account created successfully!");
+        saveData();
+
+        System.out.println("Account created successfully.");
     }
 
-
-    //Display all accounts
+    // Display all accounts
     public void displayAllAccounts() {
 
         if (accounts.isEmpty()) {
-            System.out.println("No accounts available.");
+            System.out.println("No accounts found.");
             return;
         }
 
-        System.out.println("\n===== ALL BANK ACCOUNTS =====");
-
         for (BankAccount account : accounts.values()) {
-
-            System.out.println("Account Number: "
-                    + account.getAccountNumber());
-
-            System.out.println("Account Holder: "
-                    + account.getAccountHolderName());
-
-            System.out.println("Balance: Rs. "
-                    + account.getBalance());
-
-            System.out.println("--------------------------");
+            account.displayAccountDetails();
         }
     }
 
-
-    //Search account
-    public BankAccount searchAccount(int accountNumber)
+    // Search account
+    public void searchAccount(int accountNumber)
             throws AccountNotFoundException {
 
         BankAccount account = accounts.get(accountNumber);
 
         if (account == null) {
             throw new AccountNotFoundException(
-                    "Account not found!"
-            );
+                    "Account not found.");
         }
 
-        return account;
+        account.displayAccountDetails();
     }
 
-
-    //Deposit money
+    // Deposit money
     public void deposit(int accountNumber, double amount)
             throws AccountNotFoundException,
                    InvalidAmountException {
 
-        BankAccount account = searchAccount(accountNumber);
+        BankAccount account = accounts.get(accountNumber);
 
-        if (amount <= 0) {
-            throw new InvalidAmountException(
-                    "Deposit amount must be greater than zero!"
-            );
+        if (account == null) {
+            throw new AccountNotFoundException(
+                    "Account not found.");
         }
 
-        double updatedBalance = account.getBalance() + amount;
+        if (!Double.isFinite(amount) || amount <= 0) {
+            throw new InvalidAmountException(
+                    "Deposit amount must be positive and valid.");
+        }
 
-        account.setBalance(updatedBalance);
+        account.deposit(amount);
 
-        addTransaction(accountNumber, "DEPOSIT", amount);
+        Transaction transaction = new Transaction(
+                accountNumber, "Deposit", amount);
 
-        System.out.println("Amount deposited successfully!");
-        System.out.println("Updated Balance: Rs. "
-                + updatedBalance);
+        transactions.add(transaction);
+
+        saveData();
+
+        System.out.println("Amount deposited successfully.");
+        System.out.println("Updated Balance: " + account.getBalance());
     }
 
-
-    //Withdraw money
+    // Withdraw money
     public void withdraw(int accountNumber, double amount)
             throws AccountNotFoundException,
                    InvalidAmountException,
                    InsufficientBalanceException {
 
-        BankAccount account = searchAccount(accountNumber);
+        BankAccount account = accounts.get(accountNumber);
 
-        if (amount <= 0) {
+        if (account == null) {
+            throw new AccountNotFoundException(
+                    "Account not found.");
+        }
+
+        if (!Double.isFinite(amount) || amount <= 0) {
             throw new InvalidAmountException(
-                    "Withdrawal amount must be greater than zero!"
-            );
+                    "Withdrawal amount must be positive and valid.");
         }
 
         if (amount > account.getBalance()) {
             throw new InsufficientBalanceException(
-                    "Insufficient balance!"
-            );
+                    "Insufficient account balance.");
         }
 
-        double updatedBalance = account.getBalance() - amount;
+        account.withdraw(amount);
 
-        account.setBalance(updatedBalance);
+        Transaction transaction = new Transaction(
+                accountNumber, "Withdrawal", amount);
 
-        addTransaction(accountNumber, "WITHDRAWAL", amount);
+        transactions.add(transaction);
 
-        System.out.println("Amount withdrawn successfully!");
-        System.out.println("Remaining Balance: Rs. "
-                + updatedBalance);
+        saveData();
+
+        System.out.println("Amount withdrawn successfully.");
+        System.out.println("Remaining Balance: " + account.getBalance());
     }
 
-
-    //Check balance
+    // Check balance
     public void checkBalance(int accountNumber)
             throws AccountNotFoundException {
 
-        BankAccount account = searchAccount(accountNumber);
+        BankAccount account = accounts.get(accountNumber);
+
+        if (account == null) {
+            throw new AccountNotFoundException(
+                    "Account not found.");
+        }
+
+        System.out.println("Account Number: "
+                + account.getAccountNumber());
 
         System.out.println("Account Holder: "
                 + account.getAccountHolderName());
 
-        System.out.println("Available Balance: Rs. "
+        System.out.println("Available Balance: "
                 + account.getBalance());
     }
 
-
-    //Add transaction
-    private void addTransaction(int accountNumber,
-                                String type,
-                                double amount) {
-
-        Transaction transaction = new Transaction(
-                transactionCounter++,
-                accountNumber,
-                type,
-                amount
-        );
-
-        transactions.add(transaction);
-    }
-
-
-    //Display transaction history
-    public void displayTransactions(int accountNumber)
+    // Display transaction history
+    public void displayTransactionHistory(int accountNumber)
             throws AccountNotFoundException {
 
-        searchAccount(accountNumber);
+        if (!accounts.containsKey(accountNumber)) {
+            throw new AccountNotFoundException(
+                    "Account not found.");
+        }
 
         boolean found = false;
-
-        System.out.println("\n===== TRANSACTION HISTORY =====");
 
         for (Transaction transaction : transactions) {
 
@@ -207,19 +237,23 @@ public class BankService {
         }
 
         if (!found) {
-            System.out.println("No transactions available.");
+            System.out.println("No transactions found for this account.");
         }
     }
 
-
-    //Delete account
+    // Delete account
     public void deleteAccount(int accountNumber)
             throws AccountNotFoundException {
 
-        searchAccount(accountNumber);
+        if (!accounts.containsKey(accountNumber)) {
+            throw new AccountNotFoundException(
+                    "Account not found.");
+        }
 
         accounts.remove(accountNumber);
 
-        System.out.println("Account deleted successfully!");
+        saveData();
+
+        System.out.println("Account deleted successfully.");
     }
 }
