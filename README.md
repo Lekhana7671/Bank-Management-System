@@ -212,8 +212,7 @@ banking-related errors:
 
 The application displays a menu in the Eclipse console:
 
-<img width="1917" height="1077" alt="image" src="https://github.com/user-attachments/assets/220515b0-21cd-4125-a07b-ee0d6c2e76b5" />
-
+<img width="1917" height="1077" alt="image" src="https://github.com/user-attachments/assets/14e834fd-fb9c-4f9b-818c-aa47ceeb3e0e" />
 
 ## 📈 Sample Transaction Flow
 
