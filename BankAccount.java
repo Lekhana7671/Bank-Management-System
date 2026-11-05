@@ -1,32 +1,45 @@
-package com.bankease;
+package com.bankingsystem;
 
-public class BankAccount {
+import java.io.Serializable;
 
-	 private int accountNumber;
-	 private String accountHolderName;
-	 private double balance;
+public class BankAccount implements Serializable {
 
-	 public BankAccount(int accountNumber, String accountHolderName, double balance) {
+    private int accountNumber;
+    private String accountHolderName;
+    private double balance;
 
-	        this.accountNumber = accountNumber;
-	        this.accountHolderName = accountHolderName;
-	        this.balance = balance;
-	    }
+    public BankAccount(int accountNumber, String accountHolderName, double balance) {
 
-	    public int getAccountNumber() {
-	        return accountNumber;
-	    }
+        this.accountNumber = accountNumber;
+        this.accountHolderName = accountHolderName;
+        this.balance = balance;
+    }
 
-	    public String getAccountHolderName() {
-	        return accountHolderName;
-	    }
+    public int getAccountNumber() {
+        return accountNumber;
+    }
 
-	    public double getBalance() {
-	        return balance;
-	    }
+    public String getAccountHolderName() {
+        return accountHolderName;
+    }
 
-	    public void setBalance(double balance) {
-	        this.balance = balance;
-	    }
+    public double getBalance() {
+        return balance;
+    }
 
+    public void deposit(double amount) {
+        balance += amount;
+    }
+
+    public void withdraw(double amount) {
+        balance -= amount;
+    }
+
+    public void displayAccountDetails() {
+
+        System.out.println("Account Number: " + accountNumber);
+        System.out.println("Account Holder: " + accountHolderName);
+        System.out.println("Balance: " + balance);
+        System.out.println("--------------------------------");
+    }
 }
