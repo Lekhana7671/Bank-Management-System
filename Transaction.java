@@ -1,43 +1,36 @@
-package com.bankease;
+package com.bankingsystem;
 
-public class Transaction {
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-    private int transactionId;
+public class Transaction implements Serializable {
+
     private int accountNumber;
     private String transactionType;
     private double amount;
+    private LocalDateTime dateTime;
 
-    public Transaction(int transactionId, int accountNumber,
-                       String transactionType, double amount) {
+    public Transaction(int accountNumber, String transactionType, double amount) {
 
-        this.transactionId = transactionId;
         this.accountNumber = accountNumber;
         this.transactionType = transactionType;
         this.amount = amount;
-    }
-
-    public int getTransactionId() {
-        return transactionId;
+        this.dateTime = LocalDateTime.now();
     }
 
     public int getAccountNumber() {
         return accountNumber;
     }
 
-    public String getTransactionType() {
-        return transactionType;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
     public void displayTransaction() {
 
-        System.out.println("Transaction ID: " + transactionId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
         System.out.println("Account Number: " + accountNumber);
         System.out.println("Transaction Type: " + transactionType);
-        System.out.println("Amount: Rs. " + amount);
-        System.out.println("--------------------------");
+        System.out.println("Amount: " + amount);
+        System.out.println("Date and Time: " + dateTime.format(formatter));
+        System.out.println("--------------------------------");
     }
 }
